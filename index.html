@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revealing EEG Microstate Features | Refactored Code Merge Task</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --accent-color: #2563eb;
+            --accent-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success-color: #16a34a;
+            --warning-color: #dc2626;
+            --info-color: #0284c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 3rem;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 4rem 2rem 3rem 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            max-width: 950px;
+            margin: 0 auto 1.5rem auto;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .authors {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .badge-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .badge-btn:hover {
+            background-color: var(--accent-color);
+        }
+
+        .container {
+            display: block;
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        section h2 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        /* Contributions Grid */
+        .contrib-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .contrib-card {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .contrib-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .contrib-icon {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .contrib-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        /* Paper Paragraphs Box */
+        .paper-para-box {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .paper-para-box h3 {
+            font-size: 1.05rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .lang-tag {
+            font-size: 0.75rem;
+            background-color: #e2e8f0;
+            color: #334155;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Figures Section */
+        .figure-card {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            background-color: #fafafa;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .figure-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .figure-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.375rem;
+            border: 1px solid var(--border-color);
+            margin: 1rem 0;
+            background-color: #ffffff;
+        }
+
+        .figure-caption {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-align: justify;
+            line-height: 1.5;
+            margin-top: 0.5rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            background-color: #fafafa;
+        }
+
+        .card.gt { border-left: 4px solid var(--success-color); }
+        .card.pt { border-left: 4px solid var(--warning-color); }
+        .card.gr { border-left: 4px solid var(--accent-color); }
+        .card.pr { border-left: 4px solid #d97706; }
+
+        .card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .code-block {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .copy-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--primary-color);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Revealing EEG Microstate Features According to Performance on a Merge Task of Refactored Source Code</h1>
+        <div class="authors">
+            <span>Robson Keemps<sup>1,2</sup></span> &bull; <span>Kleinner Farias<sup>2</sup></span>
+        </div>
+        <p style="color: #94a3b8; font-size: 0.9rem;">
+            <sup>1</sup>Instituto Federal de Educação, Ciência e Tecnologia de Mato Grosso (IFMT)<br>
+            <sup>2</sup>Universidade do Vale do Rio dos Sinos (UNISINOS)
+        </p>
+
+        <div class="badges">
+            <a href="https://doi.org/10.5281/zenodo.17386294" target="_blank" class="badge-btn">
+                <i class="fas fa-database"></i> Zenodo Dataset
+            </a>
+            <a href="https://colab.research.google.com/drive/1lD1mRrtNIlInZcpmrhaTVR_lMp8x8bZX" target="_blank" class="badge-btn">
+                <i class="fab fa-python"></i> Colab Pipeline
+            </a>
+            <a href="#citation" class="badge-btn">
+                <i class="fas fa-quote-right"></i> Cite Paper
+            </a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Abstract & Overview -->
+        <section>
+            <h2><i class="fas fa-align-left"></i> Abstract & Overview</h2>
+            <p>
+                Merging refactored code demands intense cognitive processing, visual search, and spatial mental alignment. 
+                This study introduces a neuroscientific evaluation using <strong>EEG Microstate Analysis</strong> to map sub-second cerebral network dynamics while software developers resolve merge tasks.
+            </p>
+            <p>
+                By tracking microstate transition syntax across canonical classes (A, B, C, D), we identify key neurophysiological predictors distinguishing high-performing developers from those experiencing cognitive overload or perceptual uncertainty.
+            </p>
+            <p>
+                In this study, we analyze EEG signals collected from 42 developers performing ten cognitive tasks involving source code refactoring and merging.
+            </p>
+            <p>
+                The main contributions of this work are threefold: (i) the proposal of an experimental pipeline that ensures reproducibility while aligning developers’ cognitive performance with the occurrence and transitions of EEG microstates, thereby providing a methodological basis for future research at the intersection of neural signals and software engineering; (ii) an analysis of EEG microstate dynamics, including duration, global field power (GFP), and transition patterns, considering different task types and performance levels; and (iii) the creation of a novel EEG dataset comprising recordings from 42 individuals during resting states and Java code refactoring tasks, addressing the lack of datasets focused on specific programming activities. 
+            </p>
+        </section>
+
+        <!-- Main Contributions -->
+        <section>
+            <h2><i class="fas fa-award"></i> Main Contributions</h2>
+            <div class="contrib-grid">
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-microscope"></i></div>
+                    <h3>Millisecond Neurocognitive Mapping</h3>
+                    <p>The first study to analyze the syntax of microstate transitions on a millisecond scale during source code refactoring and integration, relating cognitive load to developer performance during refactoring and merging tasks.</p>
+                    <p>
+                        Previous studies have shown that merge failures are a recurring challenge in collaborative software development. 
+                        Between 10% and 20% of merges may fail, with some projects reporting rates approaching 50% 
+                        <span>
+                            [<a href="https://dl.acm.org/doi/abs/10.1145/2025113.2025139" target="_blank"><em>brun2011proactive</em></a>,
+                            <a href="https://ieeexplore.ieee.org/abstract/document/6606619" target="_blank"><em>kasi2013cassandra</em></a>,
+                            <a href="https://ieeexplore.ieee.org/abstract/document/4228648" target="_blank"><em>zimmermann2007mining</em></a>].
+                        </span>
+                        These failures can increase integration effort, particularly when developers need to identify and resolve merge conflicts 
+                        <span>
+                            [<a href="https://ieeexplore.ieee.org/abstract/document/10172766" target="_blank"><em>oliveira2023code</em></a>].
+                        </span>
+                    </p>
+                </div>
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-project-diagram"></i></div>
+                    <h3>Syntax Signatures (GT vs. PT) and (GR vs. PR)</h3>
+                    <p>Identification of task-oriented functional circuits (AB, BA, DA, DB) in good performers versus poor performers.</p>
+                    <p><em><strong>Duration (ms)</strong>.</em> Microstates A and B showed longer durations during tasks (GT and PT), whereas C and D were more stable during rest, particularly in GR.</p>
+                    <p><em><strong>Occurrence (Hz)</strong>.</em> Microstate A occurred more frequently in correct tasks (GT), while C and D predominated during rest (GR). Significant differences were observed across most microstates (<em>p</em> &lt; 0.001).</p>
+                    <p><em><strong>Coverage (%)</strong>.</em> A and B predominated in correct tasks (GT), while C and D were more prevalent during rest (GR), suggesting modulation by task condition and performance.</p>
+                    <p><em><strong>GFP (&mu;V)</strong>.</em> GFP showed fewer differences across groups than the temporal metrics, indicating lower sensitivity to task/rest and performance conditions.</p>
+                </div>
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-bed"></i></div>
+                    <h3>Resting and Task State Predictability</h3>
+                    <p>Discovery that baseline rest syntax (CD/DC balance vs. BA/CA/CB/DA dispersion) acts as a neuromarker for wake-state instability and subsequent performance failure.</p>
+                    <p>The results are positive, demonstrating that EEG microstate temporal characteristics differ between successful and unsuccessful code refactoring activities. Specifically, the temporal metrics <strong>Duration</strong>, <strong>Coverage</strong>, and <strong>Occurrence</strong> revealed consistent performance-related differences across the four canonical microstates. During the task condition, microstates A, B, and D were predominantly associated with successful refactoring, whereas microstate C was more frequently observed among participants who performed the task unsuccessfully. A similar trend was observed during the resting condition, where microstates A, C, and D were more prevalent in the poor-performing group, while microstate B remained associated with good performers. Among all evaluated measures, the temporal features exhibited the greatest sensitivity for distinguishing between performance groups, whereas the <strong>Global Field Potential</strong> (GFP) showed limited discriminative capability. These findings indicate that the temporal dynamics of EEG microstates provide meaningful neurophysiological markers of cognitive processes underlying code refactoring performance, supporting the conclusion that successful and unsuccessful refactoring activities are characterized by distinct microstate temporal patterns.</p>
+                </div>
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-database"></i></div>
+                    <h3>BrainMergeEEG Open Benchmark</h3>
+                    <p>Release of a ~8.0 GB open-access dataset containing raw EEG recordings (42 subjects) and reproducible MNE/Pycrostates filtering pipelines on Zenodo.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Temporal Dynamics of Microstate Sequences -->
+        <section id="temporal-dynamics">
+            <h2><i class="fas fa-clock"></i> Temporal Dynamics of Microstate Sequences</h2>
+            <p>
+                The analysis of the temporal dynamics of microstate sequences transcends isolated static metrics—such as mean duration, frequency of occurrence, and percentage of time coverage—by focusing on the sequential structure and syntax governing sub-second switching between large-scale brain networks. With typical durations between 60 and 120 milliseconds, each microstate operates as a temporarily stable functional state; thus, the chronological succession and transition probabilities between canonical classes provide a millisecond-resolution window into the coordination, flexibility, and computational cost of cognitive processing. This syntactic perspective reveals how the developer's brain transitions between task-oriented configurations and baseline states, highlighting operational stability and neural efficiency under varying performance levels.
+            </p>
+
+            <!-- Annotated Paragraphs -->
+            <h3 style="margin-top: 1.5rem; margin-bottom: 1rem; color: var(--primary-color);">Annotated Heatmap Paragraphs</h3>
+
+            <!-- GT Paragraph -->
+            <div class="paper-para-box">
+                <h3>Task State: Good Performers (GT) <span class="lang-tag">LaTeX / EN</span></h3>
+                <p>
+                    <strong>Figure \ref{fig:heatmap_TASK}</strong> presents the heatmap for good performers in task state (GT). In the GT, AB, BA, DA, and DB transitions predominate, with more intense coloring on the map. This pattern suggests greater direction and consistency in neural dynamics during the successful completion of the task, indicating that cognitive processing occurred more efficiently and with less need for global reconfiguration. The lower participation of transitions such as CD and DC reinforces the idea that, in high-performance situations, the brain tends to explore a more restricted set of functional trajectories between microstates, reflecting greater stability and operational predictability characteristic of neural networks in optimized operation.
+                </p>
+            </div>
+
+            <!-- PT Paragraph -->
+            <div class="paper-para-box" style="border-left-color: var(--warning-color);">
+                <h3>Task State: Poor Performers (PT) <span class="lang-tag">LaTeX / EN</span></h3>
+                <p>
+                    <strong>Figure \ref{fig:heatmap_TASK}</strong> presents the heatmap for poor performers in task state (PT), revealing more distributed transitions with higher intensities in pairs such as BA, CB, and BC, indicating a greater need for dynamic adjustments during task processing. This increased structural reconfiguration suggests that the brain required more rapid changes between microstates to cope with cognitive overload or perceptual uncertainty, consistent with a less efficient decision-making scenario. The dispersion of activations also shows that, when performance fails, the neural system tends to follow less stable, more exploratory patterns, reflecting attempts at reorientation during the task.
+                </p>
+            </div>
+
+            <!-- GR Paragraph -->
+            <div class="paper-para-box" style="border-left-color: var(--accent-color);">
+                <h3>Resting State: Correct Outcome (GR) <span class="lang-tag">LaTeX / EN</span></h3>
+                <p>
+                    <strong>Figure \ref{fig:heatmap_REST}</strong> presents the heatmap for the rest condition with correct performance (GR), where a strong concentration of CD and DC transitions stands out, represented in the heatmap by more intense coloring. This pattern indicates a more stable profile of neural functioning, aligned with evidence that, during rest, the brain tends to operate in states of lower variability and a greater predominance of specific microstates. The reduction of dispersed transitions suggests that, even at rest, the cognitive state was cohesive and organized, reflecting consistent and less oscillatory internal processing compared to the task state.
+                </p>
+            </div>
+
+            <!-- PR Paragraph -->
+            <div class="paper-para-box" style="border-left-color: #d97706;">
+                <h3>Resting State: Incorrect Outcome (PR) <span class="lang-tag">LaTeX / EN</span></h3>
+                <p>
+                    <strong>Figure \ref{fig:heatmap_REST}</strong> presents the heatmap for rest with incorrect performance (PR), showing a greater diversity of active transitions, particularly BA, CA, CB, and DA. This pattern indicates greater neural variability even at rest, suggesting that participants exhibited greater internal instability when subsequent behavioral performance was worse. The intensification of these transitions may reflect attentional fluctuations, less active regulation of resting networks, or greater dispersion of spontaneous cognitive activity, a behavior frequently associated with lower operational consistency of the neural network in reduced performance scenarios.
+                </p>
+            </div>
+        </section>
+
+        <!-- Key Figures & Visualizations -->
+        <section>
+            <h2><i class="fas fa-images"></i> Main Figures & Results</h2>
+
+            <!-- Figure 1 -->
+            <div class="figure-card">
+                <h3>Figure 1: Canonical EEG Microstate Topographies</h3>
+                <img src="images/maps_EEG_V4.png" alt="Canonical EEG Microstates A, B, C, and D" class="figure-img" onerror="this.src='https://via.placeholder.com/900x250?text=Figure+1:+Canonical+EEG+Microstates+(A,+B,+C,+D)'">
+                <p class="figure-caption">
+                    <strong>Figure 1.</strong> Standard spatial topographies corresponding to four canonical EEG microstates: 
+                    <strong>Microstate A</strong> (temporal/auditory), <strong>Microstate B</strong> (occipital/visual), 
+                    <strong>Microstate C</strong> (anterior Default Mode Network), and <strong>Microstate D</strong> (dorsal frontoparietal attention network).
+                </p>
+            </div>
+
+            <!-- Figure 2 -->
+            <div class="figure-card">
+                <h3>Figure 2: Experimental Task & EEG Processing Pipeline</h3>
+                <img src="images/Steps_processamento.drawio.png" alt="Experimental Protocol and EEG Pipeline" class="figure-img" onerror="this.src='https://via.placeholder.com/900x300?text=Figure+2:+Experimental+Task+Protocol+%26+EEG+Pipeline'">
+                <p class="figure-caption">
+                    <strong>Figure 2.</strong> Experimental workflow illustrating resting-state recording followed by refactored source code merge task sessions. Raw multi-channel EEG data undergo bandpass filtering (1–40 Hz), ICA artifact rejection, modified k-means clustering, and microstate sequence backfitting.
+                </p>
+            </div>
+
+            <!-- Figure 3 -->
+            <div class="figure-card">
+                <h3>Figure 3: Microstate Transition Heatmaps in Task State (GT vs. PT)</h3>
+                <img src="images/heatmap_task.png" alt="Task State Heatmaps GT vs PT" class="figure-img" onerror="this.src='https://via.placeholder.com/900x350?text=Figure+3:+Heatmap+Task+State+-+GT+(Good)+vs.+PT+(Poor)'">
+                <p class="figure-caption">
+                    <strong>Figure 3.</strong> Transition probability heatmaps during task execution. <strong>GT (Good Performers):</strong> High concentration of AB, BA, DA, and DB transitions, demonstrating directed visual-attentional coupling. <strong>PT (Poor Performers):</strong> Increased dispersion across BA, CB, and BC transitions, reflecting cognitive overload and frequent DMN intrusions.
+                </p>
+            </div>
+
+            <!-- Figure 4 -->
+            <div class="figure-card">
+                <h3>Figure 4: Microstate Transition Heatmaps in Resting State (GR vs. PR)</h3>
+                <img src="images/heatmap_rest.png" alt="Resting State Heatmaps GR vs PR" class="figure-img" onerror="this.src='https://via.placeholder.com/900x350?text=Figure+4:+Heatmap+Resting+State+-+GR+(Correct)+vs.+PR+(Incorrect)'">
+                <p class="figure-caption">
+                    <strong>Figure 4.</strong> Baseline resting-state transition matrices prior to task execution. <strong>GR (Rest - Correct Outcome):</strong> Dominant CD and DC transitions, reflecting cohesive, well-organized baseline readiness. <strong>PR (Rest - Incorrect Outcome):</strong> Dispersed transitions (BA, CA, CB, DA), indicating wake-state instability prior to task engagement.
+                </p>
+            </div>
+        </section>
+
+        <!-- Canonical Microstate Mapping -->
+        <section>
+            <h2><i class="fas fa-brain"></i> Canonical Microstate Summary</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Topography</th>
+                        <th>Functional Network</th>
+                        <th>Cognitive Function</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Microstate A</strong></td>
+                        <td>Right-Left Diagonal</td>
+                        <td>Temporal / Auditory</td>
+                        <td>Phonological & verbal processing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Microstate B</strong></td>
+                        <td>Left-Right Diagonal</td>
+                        <td>Primary Visual Network</td>
+                        <td>Visuospatial imagery & source code inspection</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Microstate C</strong></td>
+                        <td>Anterior-Posterior</td>
+                        <td>Anterior DMN</td>
+                        <td>Task-negative, self-referential & mind-wandering</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Microstate D</strong></td>
+                        <td>Frontal Central</td>
+                        <td>Dorsal Attention (DAN / FPN)</td>
+                        <td>Top-down executive control & goal orientation</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Dataset Information -->
+        <section>
+            <h2><i class="fas fa-database"></i> BrainMergeEEG Dataset</h2>
+            <p>
+                The open-access <strong>BrainMergeEEG</strong> dataset provides complete EEG signal recordings and reproducible filtering notebooks for software engineering and neurocognition researchers.
+            </p>
+            <ul>
+                <li><strong>Zenodo Repository:</strong> <a href="https://doi.org/10.5281/zenodo.17386294" target="_blank">10.5281/zenodo.17386294</a></li>
+                <li><strong>Contents:</strong> 2.5 GB raw CSV recordings (42 subjects) + MNE / Pycrostates Python notebooks.</li>
+                <li><strong>License:</strong> GNU General Public License v3.0.</li>
+            </ul>
+        </section>
+
+        <!-- Step-by-Step Raw EEG Data Collection Protocol -->
+        <section id="eeg-collection">
+            <h2><i class="fas fa-headset"></i> Step-by-Step Raw EEG Data Collection Protocol</h2>
+            <p>
+                The acquisition of continuous multi-channel raw EEG signals was structured to capture brain network dynamics under rigorous controlled conditions. The experimental protocol follows a standardized 5-step workflow:
+            </p>
+
+            <div class="contrib-grid">
+				<div class="contrib-card">
+				<div class="contrib-icon"><i class="fas fa-cogs"></i></div>
+				<h3>Step 1: EEG Data Collection Environment Configuration</h3>
+				<p>The EEG data collection environment was configured to ensure the proper operation of the EEG acquisition system and the experimental setup used during the study.</p>
+				<strong>Configuration Guide:</strong>
+				<a href="https://drive.google.com/file/d/1o6TT-okigTsV9qBxooYbl1Z2wtJKMDX5/view?usp=sharing" target="_blank">
+					Raw EEG Data Collection Environment Configuration
+				</a>
+			</div>
+
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-user-check"></i></div>
+                    <h3>Step 2: Participant Preparation & Screening</h3>
+                    <p>42 software developers (subjects <code>S01</code> to <code>S42</code>) were recruited, verified for normal or corrected-to-normal vision, and briefed on the experiment. Informed consent was collected alongside a pre-test survey on Java programming and code refactoring experience.</p>
+					<strong>Zenodo Repository:</strong> <a href="https://doi.org/10.5281/zenodo.17386294" target="_blank">10.5281/zenodo.17386294</a></li>
+                </div>
+
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-plug"></i></div>
+                    <h3>Step 3: Electrode Placement & Hardware Calibration</h3>
+                    <p>Multi-channel EEG caps were positioned according to the International 10–20 System. Conductive gel was applied to lower electrode-skin impedance below the operational threshold (&lt; 25 k&Omega; / &lt; 5 k&Omega;). Signal quality was verified prior to continuous data recording.</p>
+                </div>
+
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-bed"></i></div>
+                    <h3>Step 4: Baseline Resting-State Recording</h3>
+                    <p>Before starting the cognitive tasks, a continuous baseline resting-state session was recorded for each participant (eyes-open / eyes-closed). This baseline established individual pre-task neural readiness (classified later as GR or PR based on performance outcome).</p>
+                </div>
+
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-code"></i></div>
+                    <h3>Step 5: Refactored Code Merge Task Execution</h3>
+                    <p>Participants completed 10 controlled Java source code refactoring and integration tasks. Task triggers, onset timestamps, and completion events were synchronized with continuous multi-channel EEG recordings and behavioral log files.</p>
+                </div>
+
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-file-export"></i></div>
+                    <h3>Step 6: Raw Signal Export & Dataset Structuring</h3>
+                    <p>Continuous voltage time-series data were exported into raw <code>.csv</code> files without applying destructive spatial or frequency transformations. Data were formatted per subject into directory structures (e.g., <code>eeg_experiment/EEG/SXX/SXX-N-2024.csv</code>) for open distribution on Zenodo.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Replication of Controlled Experiment -->
+        <section id="replication">
+            <h2><i class="fas fa-redo"></i> Replication of the Controlled Experiment</h2>
+            <p>
+                To support open science and full empirical reproducibility, the <strong>BrainMergeEEG</strong> benchmark provides all raw multi-channel EEG recordings, task execution logs, and an end-to-end Python processing pipeline. Researchers can replicate the microstate spatial clustering, temporal feature extraction (Duration, Occurrence, Coverage, GFP), and syntax transition heatmaps across all 42 developer subjects.
+            </p>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3><i class="fas fa-cogs"></i> 1. Environment & Prerequisites</h3>
+                    <p>The analysis pipeline relies on standard Python libraries for signal processing and neuroimaging analysis (MNE-Python, Pycrostates, NumPy, Pandas, SciPy). You can run the preprocessing notebook directly on Google Colab or in your local environment.</p>
+                    <a href="https://colab.research.google.com/drive/1lD1mRrtNIlInZcpmrhaTVR_lMp8x8bZX" target="_blank" class="badge-btn" style="color: #ffffff; background-color: var(--accent-color); text-decoration: none; margin-top: 0.5rem; display: inline-flex;">
+                        <i class="fab fa-python"></i> Open Colab Pipeline Notebook
+                    </a>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-download"></i> 2. Dataset Download</h3>
+                    <p>Download the dataset archive <code>EEG_Experiment.zip</code> (2.5 GB compressed, ~8.0 GB uncompressed CSV files) from Zenodo and extract it into your local project root folder.</p>
+                    <a href="https://doi.org/10.5281/zenodo.17386294" target="_blank" class="badge-btn" style="color: #ffffff; background-color: #0284c7; text-decoration: none; margin-top: 0.5rem; display: inline-flex;">
+                        <i class="fas fa-database"></i> Access Zenodo Benchmark
+                    </a>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--primary-color);">4-Step Signal Processing & Microstate Pipeline Workflow</h3>
+            <p>The reproduction workflow follows the exact pipeline illustrated in <strong>Figure 2</strong> (<code>images/Steps_processamento.drawio.png</code>) and executed in <code>1_ProcessingFiltersEEG.ipynb</code>:</p>
+            
+            <div class="contrib-grid">
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-filter"></i></div>
+                    <h3>Step 1: Raw Loading & Filtering</h3>
+                    <p>Load multi-channel CSV files for participants <code>S01</code> through <code>S42</code>. Apply bandpass filtering (1–40 Hz) and a notch filter at 60 Hz to remove environmental noise.</p>
+                </div>
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-user-slash"></i></div>
+                    <h3>Step 2: Artifact Removal (ICA)</h3>
+                    <p>Decompose filtered signals using Independent Component Analysis (ICA) to reject ocular artifacts (eye blinks/movements) and muscular noise.</p>
+                </div>
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-object-group"></i></div>
+                    <h3>Step 3: Clustering (k=4)</h3>
+                    <p>Extract Global Field Power (GFP) peaks and perform modified k-means spatial clustering to identify canonical microstate topographies A, B, C, and D (<strong>Figure 1</strong>).</p>
+                </div>
+                <div class="contrib-card">
+                    <div class="contrib-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Step 4: Backfitting & Transition Syntax</h3>
+                    <p>Backfit microstate templates onto continuous EEG to compute temporal features (Duration, Coverage, Occurrence, GFP) and export transition heatmaps for GT, PT, GR, and PR (<strong>Figures 3 & 4</strong>).</p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--primary-color);">Quick Command-Line Reproduction Guide</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyReplicationCmd()">Copy Shell Commands</button>
+<pre id="replication-cmd">
+# 1. Clone this repository
+git clone https://github.com/your-username/brainmerge-eeg.git
+cd brainmerge-eeg
+
+# 2. Install required neuroimaging dependencies
+pip install mne pycrostates numpy pandas scipy matplotlib jupyter
+
+# 3. Download and extract dataset from Zenodo (DOI: 10.5281/zenodo.17386294)
+wget https://zenodo.org/records/17386294/files/EEG_Experiment.zip
+unzip EEG_Experiment.zip -d eeg_experiment/
+
+# 4. Execute the processing pipeline notebook
+jupyter nbconvert --to notebook --execute 1_ProcessingFiltersEEG.ipynb
+</pre>
+            </div>
+        </section>
+
+        <!-- Citation -->
+        <section id="citation">
+            <h2><i class="fas fa-quote-left"></i> How to Cite</h2>
+            <p>If you build upon this work or use the dataset, please cite our benchmark paper and dataset:</p>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyBibtex()">Copy BibTeX</button>
+<pre id="bibtex-text">
+@dataset{keemps_brainmergeeeg_2025,
+  author       = {Keemps, Robson and Farias, Kleinner},
+  title        = {BrainMergeEEG: An Open EEG Microstate Dataset for Studying Developers' Brain Network Dynamics},
+  publisher    = {Zenodo},
+  year         = {2025},
+  doi          = {10.5281/zenodo.17386294},
+  url          = {https://doi.org/10.5281/zenodo.17386294}
+}
+
+@article{shen2024conflictbench,
+  author    = {Shen, Bowen and Meng, Na},
+  title     = {ConflictBench: A benchmark to evaluate software merge tools},
+  journal   = {Journal of Systems and Software},
+  volume    = {214},
+  pages     = {112084},
+  year      = {2024},
+  doi       = {10.1016/j.jss.2024.112084}
+}
+</pre>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025-2026 BrainMergeEEG Project &bull; Software Engineering & Neurocognition Research</p>
+    </footer>
+
+    <script>
+        function copyBibtex() {
+            const bibtexText = document.getElementById("bibtex-text").innerText;
+            navigator.clipboard.writeText(bibtexText).then(() => {
+                alert("BibTeX copied to clipboard!");
+            }).catch(err => {
+                console.error("Failed to copy text: ", err);
+            });
+        }
+
+        function copyReplicationCmd() {
+            const cmdText = document.getElementById("replication-cmd").innerText;
+            navigator.clipboard.writeText(cmdText).then(() => {
+                alert("Replication commands copied to clipboard!");
+            }).catch(err => {
+                console.error("Failed to copy text: ", err);
+            });
+        }
+    </script>
+</body>
+</html>
